@@ -1,10 +1,11 @@
 const fs = require('fs');
+const Tour = require('./../models/tourModel');
 
-const tours = JSON.parse(
+/*const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
+);*/
 
-exports.checkID = function(req, res, next, val) {
+/*exports.checkID = function(req, res, next, val) {
   console.log(`Tour id is: ${val}`);
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
@@ -13,9 +14,9 @@ exports.checkID = function(req, res, next, val) {
     });
   }
   next();
-};
+};*/
 
-exports.checkBody = function(req, res, next) {
+/*exports.checkBody = function(req, res, next) {
   if (!req.body.name || !req.body.price) {
     return res.status(400).json({
       status: 'false',
@@ -23,39 +24,56 @@ exports.checkBody = function(req, res, next) {
     });
   }
   next();
-};
+};*/
 
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
 
   res.status(200).json({
     status: 'success',
-    requestedAt: req.requestTime,
-    result: tours.length,
-    data: {
-      tours
-    }
+    requestedAt: req.requestTime
+    // result: tours.length,
+    // data: {
+    //   tours
+    // }
   });
 };
 
 exports.getTour = (req, res) => {
   console.log(req.params);
   const id = req.params.id * 1;//用*是为了将前面的转化为数字
-  const tour = tours.find(el => el.id === id);
-
-
-  res.status(200).json({
-    status: 'success',
-    //results: tours.length,
-    data: {
-      tour
-    }
-  });
+  // const tour = tours.find(el => el.id === id);
+  // res.status(200).json({
+  //   status: 'success',
+  //   //results: tours.length,
+  //   data: {
+  //     tour
+  //   }
+  // });
 };
 
-exports.createTour = (req, res) => {
-  // console.log(req.body);
+exports.createTour = async (req, res) => {
 
+  try {
+    // const newTour = new Tour({});
+    // newTour.save;
+    const newTour = await Tour.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err
+    });
+  }
+};
+// console.log(req.body);
+/*
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
   tours.push(newTour);
@@ -68,10 +86,8 @@ exports.createTour = (req, res) => {
         data: {
           tour: newTour
         }
-      });
-    }
-  );
-};
+      });*/
+
 
 exports.updateTour = (req, res) => {
 
