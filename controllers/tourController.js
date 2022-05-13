@@ -26,30 +26,50 @@ const Tour = require('./../models/tourModel');
   next();
 };*/
 
-exports.getAllTours = (req, res) => {
-  console.log(req.requestTime);
+exports.getAllTours = async (req, res) => {
+  // console.log(req.requestTime);
+  try {
+    const tours = await Tour.find();
 
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime
-    // result: tours.length,
-    // data: {
-    //   tours
-    // }
-  });
+    res.status(200).json({
+      status: 'success',
+      //requestedAt: req.requestTime
+      result: tours.length,
+      data: {
+        tours
+      }
+    });
+  } catch (e) {
+    res.status(404).json({
+      status: 'fail',
+      message: e
+    });
+  }
 };
 
-exports.getTour = (req, res) => {
-  console.log(req.params);
+exports.getTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+    // Tour.findOne({ _id: req.params.id})
+
+    res.status(200).json({
+      status: 'success',
+      //results: tours.length,
+      data: {
+        tour
+      }
+    });
+  } catch (e) {
+    res.status(404).json({
+      status: 'fail',
+      message: e
+    });
+  }
+
+  /*console.log(req.params);
   const id = req.params.id * 1;//用*是为了将前面的转化为数字
-  // const tour = tours.find(el => el.id === id);
-  // res.status(200).json({
-  //   status: 'success',
-  //   //results: tours.length,
-  //   data: {
-  //     tour
-  //   }
-  // });
+  const tour = tours.find(el => el.id === id);
+  */
 };
 
 exports.createTour = async (req, res) => {
@@ -90,13 +110,23 @@ exports.createTour = async (req, res) => {
 
 
 exports.updateTour = (req, res) => {
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: '<Update tour here>'
-    }
-  });
+  try {
+    const tour = Tour.findByIdAndUpdate(req.params.id, req.body,{
+      //设置必须更新的必须是不同的
+      new: true
+    })
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour: '<Update tour here>'
+      }
+    });
+  } catch (err) {
+      res.status(404).json({
+        status: 'error',
+        message : err
+      })
+  }
 };
 
 exports.deleteTour = (req, res) => {
