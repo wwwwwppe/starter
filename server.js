@@ -17,8 +17,39 @@ mongoose
   .then(() => console.log('DB connection successful'));
 
 
+const tourSchema = new mongoose.Schema({
+  // 定义要求的条件
+  name: {
+    type: String,
+    required: [true, '必须有一个名字'],
+    unique: true
+  },
+  rating: {
+    type: Number,
+    default: 4.5
+  },
+  price: {
+    type: String,
+    required: [true, '必须有一个价格']
+  }
+});
+const Tour = mongoose.model('Tour', tourSchema);
+
+// 重复提交会出现重复的错误，因为有一个unique的属性
+const testTour = new Tour({
+  name: 'The Park Camper',
+  price: 997
+});
+
+testTour.save().then(doc =>{
+  console.log(doc);
+}).catch(err =>{
+  console.log('ERROR:',err);
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
+  console.log(`App running on port http://127.0.0.1:${port}...`);
 });
+
 
