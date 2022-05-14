@@ -17,9 +17,6 @@ mongoose
   .then(() => console.log('DB connection successful'));
 
 
-
-
-
 // 重复提交会出现重复的错误，因为有一个unique的属性
 /*const testTour = new Tour({
   name: 'The Park Camper',

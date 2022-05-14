@@ -132,7 +132,7 @@ exports.updateTour = async (req, res) => {
   }
 };
 
-exports.deleteTour =async (req, res) => {
+exports.deleteTour = async (req, res) => {
   try {
     //这儿删除不返回
     await Tour.findByIdAndDelete(req.params.id);
@@ -140,7 +140,7 @@ exports.deleteTour =async (req, res) => {
       status: 'success',
       data: null
     });
-  }catch (err) {
+  } catch (err) {
     res.status(404).json({
       status: 'error',
       message: err
