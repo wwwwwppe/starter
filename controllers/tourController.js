@@ -29,7 +29,17 @@ const Tour = require('./../models/tourModel');
 exports.getAllTours = async (req, res) => {
   // console.log(req.requestTime);
   try {
-    const tours = await Tour.find();
+    // const tours = await Tour.find({
+    //   duration: 5,
+    //   difficulty: 'easy'
+    // });
+
+    //
+    const tours = await Tour.find()
+      .where('duration')
+      .equals(5)
+      .where('difficulty')
+      .equals('easy');
 
     res.status(200).json({
       status: 'success',
@@ -132,7 +142,7 @@ exports.updateTour = async (req, res) => {
   }
 };
 
-exports.deleteTour =async (req, res) => {
+exports.deleteTour = async (req, res) => {
   try {
     //这儿删除不返回
     await Tour.findByIdAndDelete(req.params.id);
@@ -140,7 +150,7 @@ exports.deleteTour =async (req, res) => {
       status: 'success',
       data: null
     });
-  }catch (err) {
+  } catch (err) {
     res.status(404).json({
       status: 'error',
       message: err
