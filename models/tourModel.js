@@ -7,6 +7,14 @@ const tourSchema = new mongoose.Schema({
     required: [true, '必须有一个名字'],
     unique: true
   },
+  durations: {
+    type: Number,
+    required : [true, '必须有一个持续时间']
+  },
+  maxGroupSize: {
+    type: Number,
+    required: [true, ' 必须有一个组大小']
+  },
   rating: {
     type: Number,
     default: 4.5

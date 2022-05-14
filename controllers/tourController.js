@@ -108,32 +108,42 @@ exports.createTour = async (req, res) => {
         }
       });*/
 
-
-exports.updateTour = (req, res) => {
+//没有异步的话会显示失败
+exports.updateTour = async (req, res) => {
   try {
-    const tour = Tour.findByIdAndUpdate(req.params.id, req.body,{
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       //设置必须更新的必须是不同的
-      new: true
-    })
+      new: true,
+      //要符合验证器中的规则
+      runValidators: true
+    });
+
     res.status(200).json({
       status: 'success',
       data: {
-        tour: '<Update tour here>'
+        tour
       }
     });
   } catch (err) {
-      res.status(404).json({
-        status: 'error',
-        message : err
-      })
+    res.status(404).json({
+      status: 'error',
+      message: err
+    });
   }
 };
 
-exports.deleteTour = (req, res) => {
-
-
-  res.status(204).json({
-    status: 'success',
-    data: null
-  });
+exports.deleteTour =async (req, res) => {
+  try {
+    //这儿删除不返回
+    await Tour.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  }catch (err) {
+    res.status(404).json({
+      status: 'error',
+      message: err
+    });
+  }
 };
