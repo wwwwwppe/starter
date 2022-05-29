@@ -27,80 +27,80 @@ const Tour = require('./../models/tourModel');
 };*/
 
 exports.getAllTours = async (req, res) => {
-  // console.log(req.requestTime);
-  try {
-    // const tours = await Tour.find({
-    //   duration: 5,
-    //   difficulty: 'easy'
-    // });
+    // console.log(req.requestTime);
+    try {
+        // const tours = await Tour.find({
+        //   duration: 5,
+        //   difficulty: 'easy'
+        // });
 
-    //
-    const tours = await Tour.find()
-      .where('duration')
-      .equals(5)
-      .where('difficulty')
-      .equals('easy');
+        //
+        const tours = await Tour.find()
+          .where('duration')
+          .equals(5)
+          .where('difficulty')
+          .equals('easy');
 
-    res.status(200).json({
-      status: 'success',
-      //requestedAt: req.requestTime
-      result: tours.length,
-      data: {
-        tours
-      }
-    });
-  } catch (e) {
-    res.status(404).json({
-      status: 'fail',
-      message: e
-    });
-  }
+        res.status(200).json({
+            status: 'success',
+            //requestedAt: req.requestTime
+            result: tours.length,
+            data: {
+                tours
+            }
+        });
+    } catch (e) {
+        res.status(404).json({
+            status: 'fail',
+            message: e
+        });
+    }
 };
 
 exports.getTour = async (req, res) => {
-  try {
-    const tour = await Tour.findById(req.params.id);
-    // Tour.findOne({ _id: req.params.id})
+    try {
+        const tour = await Tour.findById(req.params.id);
+        // Tour.findOne({ _id: req.params.id})
 
-    res.status(200).json({
-      status: 'success',
-      //results: tours.length,
-      data: {
-        tour
-      }
-    });
-  } catch (e) {
-    res.status(404).json({
-      status: 'fail',
-      message: e
-    });
-  }
+        res.status(200).json({
+            status: 'success',
+            //results: tours.length,
+            data: {
+                tour
+            }
+        });
+    } catch (e) {
+        res.status(404).json({
+            status: 'fail',
+            message: e
+        });
+    }
 
-  /*console.log(req.params);
-  const id = req.params.id * 1;//用*是为了将前面的转化为数字
-  const tour = tours.find(el => el.id === id);
-  */
+    /*console.log(req.params);
+    const id = req.params.id * 1;//用*是为了将前面的转化为数字
+    const tour = tours.find(el => el.id === id);
+    */
 };
 
 exports.createTour = async (req, res) => {
 
-  try {
-    // const newTour = new Tour({});
-    // newTour.save;
-    const newTour = await Tour.create(req.body);
+    try {
+        // const newTour = new Tour({});
+        // newTour.save;
+        const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        tour: newTour
-      }
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    });
-  }
+        res.status(201).json({
+            status: 'success',
+            data: {
+                tour: newTour
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'fail',
+            message: err
+        });
+    }
 };
 // console.log(req.body);
 /*
@@ -120,40 +120,40 @@ exports.createTour = async (req, res) => {
 
 //没有异步的话会显示失败
 exports.updateTour = async (req, res) => {
-  try {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      //设置必须更新的必须是不同的
-      new: true,
-      //要符合验证器中的规则
-      runValidators: true
-    });
+    try {
+        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+            //设置必须更新的必须是不同的
+            new: true,
+            //要符合验证器中的规则
+            runValidators: true
+        });
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour
-      }
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'error',
-      message: err
-    });
-  }
+        res.status(200).json({
+            status: 'success',
+            data: {
+                tour
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'error',
+            message: err
+        });
+    }
 };
 
 exports.deleteTour = async (req, res) => {
-  try {
-    //这儿删除不返回
-    await Tour.findByIdAndDelete(req.params.id);
-    res.status(204).json({
-      status: 'success',
-      data: null
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'error',
-      message: err
-    });
-  }
+    try {
+        //这儿删除不返回
+        await Tour.findByIdAndDelete(req.params.id);
+        res.status(204).json({
+            status: 'success',
+            data: null
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'error',
+            message: err
+        });
+    }
 };
