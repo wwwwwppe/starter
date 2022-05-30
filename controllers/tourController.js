@@ -29,17 +29,37 @@ const Tour = require('./../models/tourModel');
 exports.getAllTours = async (req, res) => {
     // console.log(req.requestTime);
     try {
+        console.log(req.query);
+        // 1A) Filtering
+        const queryObj = { ...req.query };
+        // 这儿是用来去除包括里面的字符串
+        const excludeFields = ['page', 'sort', 'limit', 'fields'];
+        excludeFields.forEach(el => delete queryObj[el]);
+
+        // 1B) Advanced filtering
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        console.log(JSON.parse(queryStr));
+
+        let query = Tour.find(JSON.parse(queryStr));
+
+        // 2)Sorting
+        if (req.query.sort) {
+            query = query.sort(req.query.sort);
+        }
         // const tours = await Tour.find({
-        //   duration: 5,
-        //   difficulty: 'easy'
+        //     duration: 5,
+        //     difficulty: 'easy'
         // });
 
-        //
-        const tours = await Tour.find()
-          .where('duration')
-          .equals(5)
-          .where('difficulty')
-          .equals('easy');
+        // const tours = await Tour.find()
+        //     .where('duration')
+        //     .equals(5)
+        //     .where('difficulty')
+        //     .equals('easy');
+
+        // EXECUTE QUERY
+        const tours = await query;
 
         res.status(200).json({
             status: 'success',
@@ -56,6 +76,7 @@ exports.getAllTours = async (req, res) => {
         });
     }
 };
+
 
 exports.getTour = async (req, res) => {
     try {
