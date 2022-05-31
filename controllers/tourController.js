@@ -48,7 +48,18 @@ exports.getAllTours = async (req, res) => {
       const sortBy = req.query.sort.split(",").join(" ");
       console.log(sortBy);
       query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
     }
+
+    // 3) Filed Limiting
+    if (req.query.fields) {
+      const field = req.query.fields.split(",").join(" ");
+      query = query.select("name duration price");
+    } else {
+      query = query.select("__v");
+    }
+
     // const tours = await Tour.find({
     //     duration: 5,
     //     difficulty: 'easy'

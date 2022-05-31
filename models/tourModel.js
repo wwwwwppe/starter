@@ -50,7 +50,8 @@ const tourSchema = new mongoose.Schema({
   images: [String],   //相当于字符串数组
   createAt: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
+    select: false
   },
   startDates: [Date]
 });
