@@ -8,10 +8,11 @@ const userRouter = require('./routers/userRoutes');
 const app = express();
 
 // 1)
-// console.log(process.env.NODE_ENV);
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+//console.log(process.env.NODE_ENV);
+app.use(morgan('dev'));
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(morgan('dev'));
+// }
 app.use(express.json());
 // 访问静态界面
 app.use(express.static(`${__dirname}/public`));
