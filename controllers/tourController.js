@@ -1,5 +1,5 @@
-const fs = require("fs");
-const Tour = require("./../models/tourModel");
+const fs = require('fs');
+const Tour = require('./../models/tourModel');
 
 /*const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -33,7 +33,7 @@ exports.getAllTours = async (req, res) => {
     // 1A) Filtering
     const queryObj = { ...req.query };
     // 这儿是用来去除包括里面的字符串
-    const excludeFields = ["page", "sort", "limit", "fields"];
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
     excludeFields.forEach(el => delete queryObj[el]);
 
     // 1B) Advanced filtering
@@ -45,19 +45,19 @@ exports.getAllTours = async (req, res) => {
 
     // 2)Sorting
     if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
+      const sortBy = req.query.sort.split(',').join(' ');
       console.log(sortBy);
       query = query.sort(sortBy);
     } else {
-      query = query.sort("-createdAt");
+      query = query.sort('-createdAt');
     }
 
     // 3) Filed Limiting
     if (req.query.fields) {
-      const field = req.query.fields.split(",").join(" ");
-      query = query.select("name duration price");
+      const field = req.query.fields.split(',').join(' ');
+      query = query.select('name duration price');
     } else {
-      query = query.select("__v");
+      query = query.select('__v');
     }
 
     // const tours = await Tour.find({
@@ -75,7 +75,7 @@ exports.getAllTours = async (req, res) => {
     const tours = await query;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       //requestedAt: req.requestTime
       result: tours.length,
       data: {
@@ -84,7 +84,7 @@ exports.getAllTours = async (req, res) => {
     });
   } catch (e) {
     res.status(404).json({
-      status: "fail",
+      status: 'fail',
       message: e
     });
   }
@@ -97,7 +97,7 @@ exports.getTour = async (req, res) => {
     // Tour.findOne({ _id: req.params.id})
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       //results: tours.length,
       data: {
         tour
@@ -105,7 +105,7 @@ exports.getTour = async (req, res) => {
     });
   } catch (e) {
     res.status(404).json({
-      status: "fail",
+      status: 'fail',
       message: e
     });
   }
@@ -124,14 +124,14 @@ exports.createTour = async (req, res) => {
     const newTour = await Tour.create(req.body);
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         tour: newTour
       }
     });
   } catch (err) {
     res.status(400).json({
-      status: "fail",
+      status: 'fail',
       message: err
     });
   }
@@ -163,14 +163,14 @@ exports.updateTour = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         tour
       }
     });
   } catch (err) {
     res.status(404).json({
-      status: "error",
+      status: 'error',
       message: err
     });
   }
@@ -181,12 +181,12 @@ exports.deleteTour = async (req, res) => {
     //这儿删除不返回
     await Tour.findByIdAndDelete(req.params.id);
     res.status(204).json({
-      status: "success",
+      status: 'success',
       data: null
     });
   } catch (err) {
     res.status(404).json({
-      status: "error",
+      status: 'error',
       message: err
     });
   }
