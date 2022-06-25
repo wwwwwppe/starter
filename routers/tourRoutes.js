@@ -10,16 +10,23 @@ const router = express.Router();
 // Check if body contains the name and price property
 // If not, send back 400 (bad request)
 // Add it to hte post handler stack
+router
+    .route('/top-5-cheap')
+    .get(tourController.aliasTopTours, getAllTours);
 
 router
-  .route('/')
-  .get(getAllTours)
-  .post(createTour);
+    .route('/tour-stats')
+    .get(tourController.getTourStats);
 
 router
-  .route('/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+    .route('/')
+    .get(getAllTours)
+    .post(createTour);
+
+router
+    .route('/:id')
+    .get(getTour)
+    .patch(updateTour)
+    .delete(deleteTour);
 
 module.exports = router;

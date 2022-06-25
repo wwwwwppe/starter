@@ -26,12 +26,12 @@ const Tour = require('./../models/tourModel');
   next();
 };*/
 
-exports.aliasTopTours = (req, res, next) =>{
+exports.aliasTopTours = (req, res, next) => {
     req.query.limit = '5';
     req.query.sort = '-ratingsAverage,price';
     req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
     next();
-}
+};
 
 class APIFeatures {
     constructor(query, queryString) {
@@ -96,7 +96,7 @@ class APIFeatures {
 exports.getAllTours = async (req, res) => {
     // console.log(req.requestTime);
     try {
-        console.log(req.query);
+        //console.log(req.query);
         // 1A) Filtering
         // const queryObj = { ...req.query };
         // // 这儿是用来去除包括里面的字符串
@@ -146,7 +146,11 @@ exports.getAllTours = async (req, res) => {
         // query = query.skip(skip).limit(limit);
 
         // EXECUTE QUERY
-        const features = new APIFeatures(Tour.find(), req.query).filter().sort();
+        const features = new APIFeatures(Tour.find(), req.query)
+            .filter()
+            .sort()
+            .limitFields()
+            .paginate();
         const tours = await features.query;
 
         res.status(200).json({
@@ -262,6 +266,37 @@ exports.deleteTour = async (req, res) => {
     } catch (err) {
         res.status(404).json({
             status: 'error',
+            message: err
+        });
+    }
+};
+
+exports.getTourStats = async (req, res) => {
+    try {
+        const stats = await Tour.aggregate([
+            {
+                $match: { ratingsAverage: { $gte: 4.5 } }
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgRating: { $avg: '$ratingsAverage' },
+                    avgPrice: { $avg: '$price' },
+                    minPrice: { $min: '$price' },
+                    maxPrice: { $max: '$price' }
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                stats
+            }
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
             message: err
         });
     }
