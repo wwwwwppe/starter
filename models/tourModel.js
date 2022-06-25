@@ -28,7 +28,7 @@ const tourSchema = new mongoose.Schema({
     default: 0
   },
   price: {
-    type: String,
+    type: Number,
     required: [true, '必须有一个价格']
   },
   priceDiscount: {

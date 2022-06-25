@@ -49,8 +49,7 @@ class APIFeatures {
         let queryStr = JSON.stringify(queryObj);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         //console.log(JSON.parse(queryStr));
-
-        this.query.find(JSON.parse(queryStr));
+        this.query = this.query.find(JSON.parse(queryStr));
         // let query = Tour.find(JSON.parse(queryStr));
 
         return this;
@@ -79,17 +78,13 @@ class APIFeatures {
         return this;
     }
 
-    async paginate() {
+    paginate() {
         const page = this.queryString.page * 1 || 1;
         const limit = this.queryString.limit * 1 || 100;
         const skip = (page - 1) * limit;
-
         this.query = this.query.skip(skip).limit(limit);
 
-        if (this.queryString.page) {
-            const numTours = await Tour.countDocuments();
-            if (skip >= numTours) throw new Error('This page does not exit');
-        }
+        return this;
     }
 }
 
@@ -278,13 +273,26 @@ exports.getTourStats = async (req, res) => {
                 $match: { ratingsAverage: { $gte: 4.5 } }
             },
             {
+                //这儿出现了一个比较低级的错误，price中的类型开始错误的设计为String
+                //花了很大的功夫才发现是数据库类型错误，后将其改为Number
                 $group: {
-                    _id: null,
+                    //$toUpper是将难度改为大写
+                    //后面的$difficulty是根据数据库里面的difficulty来排序
+                    _id: {$toUpper: '$difficulty'},
+                    numTours: { $sum: 1 },
+                    numRatings: { $sum: '$ratingsQuantity' },
                     avgRating: { $avg: '$ratingsAverage' },
                     avgPrice: { $avg: '$price' },
                     minPrice: { $min: '$price' },
                     maxPrice: { $max: '$price' }
                 }
+            },
+            {
+                $sort: { avgPrice: 1}
+            },
+            {
+                //作用是去除id为EASY的
+                $match: {__id:{ $ne: 'EASY'}}
             }
         ]);
 

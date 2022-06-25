@@ -1,7 +1,7 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController');
 //const { id } = require('../controllers/tourController');
-const { getAllTours, createTour, getTour, updateTour, deleteTour } = tourController;
+const { getAllTours, createTour, getTour, updateTour, deleteTour,aliasTopTours } = tourController;
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
@@ -12,7 +12,7 @@ const router = express.Router();
 // Add it to hte post handler stack
 router
     .route('/top-5-cheap')
-    .get(tourController.aliasTopTours, getAllTours);
+    .get(aliasTopTours, getAllTours);
 
 router
     .route('/tour-stats')
