@@ -289,11 +289,11 @@ exports.getTourStats = async (req, res) => {
             },
             {
                 $sort: { avgPrice: 1}
-            },
+            }/*,
             {
                 //作用是去除id为EASY的
                 $match: {__id:{ $ne: 'EASY'}}
-            }
+            }*/
         ]);
 
         res.status(200).json({
@@ -303,6 +303,72 @@ exports.getTourStats = async (req, res) => {
             }
         });
     } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        });
+    }
+};
+
+//查询
+exports.getMonthlyPlan = async (req, res) => {
+    try {
+        const year = req.params.year * 1;
+
+        const plan = await Tour.aggregate([
+            {
+                $unwind: '$startDates'
+            },
+            {
+                $match:{
+                    startDates: {
+                        $gte: new Date(`${year}-01-01`),
+                        //这可太💢了，之前这里写出了$ls，然后报错"ok": 0, "code": 2, "codeName": "BadValue"
+                        //以为是版本的问题结果是这里打错了
+                        $lte: new Date(`${year}-12-31`)
+                    }
+                }
+            },
+            {
+                $group:{
+                    //_id是月份
+                    _id: {$month: '$startDates'},
+                    //统计有多少个
+                    numTourStarts:{ $sum: 1},
+                    //表示数组中有几个旅游的名字
+                    tours:{
+                        $push: '$name'
+                    }
+                }
+            },
+            //将_id变成month
+            {
+                $addFields:{ month: "$_id"}
+            },
+            //隐藏_id，$project中1表示出现，0便是隐藏
+            {
+                $project:{
+                    _id: 0
+                }
+            },
+            //$sort排序
+            {
+                $sort:{ numTourStarts: -1 }
+            },
+            //限制查询数目
+            {
+                $limit: 12
+            }
+
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data:{
+                plan
+            }
+        });
+    }catch (err) {
         res.status(404).json({
             status: 'fail',
             message: err
