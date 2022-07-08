@@ -8,6 +8,7 @@ const tourSchema = new mongoose.Schema({
         required: [true, '必须有一个名字'],
         unique: true
     },
+    slug:String,
     duration: {
         type: Number,
         required: [true, '必须有一个持续时间']
@@ -65,9 +66,20 @@ tourSchema.virtual('durationWeeks').get(function() {
 });
 
 //中间件：运行在.save()和.create()前面
-tourSchema.pre('save', function() {
-    console.log(this);
+tourSchema.pre('save', function(next) {
+    this.slug = slugify(this.name,{ lower: true });
+    next();
 });
+
+/*tourSchema.pre('save', function(next) {
+    console.log('Will save document..');
+    next();
+});
+
+tourSchema.post('save', function(doc, next) {
+    console.log(doc);
+    next();
+});*/
 
 const Tour = mongoose.model('Tour', tourSchema);
 
