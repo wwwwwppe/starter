@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourSchema = new mongoose.Schema({
     // 定义要求的条件
     name: {
         type: String,
         required: [true, '必须有一个名字'],
-        unique: true
+        unique: true,
+        trim: true,
+        maxlength: [40, '最多40个字'],
+        minlength: [5, '最少5个字'],
+        // validate: [validator.isAlpha, '名称只包含字符']
     },
-    slug:String,
+    slug: String,
     duration: {
         type: Number,
         required: [true, '必须有一个持续时间']
@@ -19,11 +24,17 @@ const tourSchema = new mongoose.Schema({
     },
     difficulty: {
         type: String,
-        required: [true, ' 必须有一个困难度']
+        required: [true, ' 必须有一个困难度'],
+        enum: {
+            values: ['easy', 'medium', 'difficult'],
+            message: '有三种难度，简单，中等，困难'
+        }
     },
     ratingsAverage: {
         type: Number,
-        default: 4.5
+        default: 4.5,
+        min: [1, '至少为1'],
+        max: [5, '最多为5']
     },
     ratingsQuantity: {
         type: Number,
@@ -34,7 +45,14 @@ const tourSchema = new mongoose.Schema({
         required: [true, '必须有一个价格']
     },
     priceDiscount: {
-        type: Number
+        type: Number,
+        validate: {
+            //这仅指向新文档创建的当前文档
+            validator: function(val) {
+                return val < this.price;
+            },
+            message: '({Value})应该低于正常价格'
+        }
     },
     summary: {
         type: String,
@@ -55,7 +73,11 @@ const tourSchema = new mongoose.Schema({
         default: Date.now(),
         select: false
     },
-    startDates: [Date]
+    startDates: [Date],
+    secretTour: {
+        type: Boolean,
+        default: false
+    }
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -67,7 +89,7 @@ tourSchema.virtual('durationWeeks').get(function() {
 
 //中间件：运行在.save()和.create()前面
 tourSchema.pre('save', function(next) {
-    this.slug = slugify(this.name,{ lower: true });
+    this.slug = slugify(this.name, { lower: true });
     next();
 });
 
@@ -80,6 +102,36 @@ tourSchema.post('save', function(doc, next) {
     console.log(doc);
     next();
 });*/
+
+//查询中间间
+/*tourSchema.pre('find', function(next) {
+    this.find({secretTour:{ $ne: true}});  //为true的隐藏，查询结果隐藏
+    // 但是这里用id查询还是可以查询的到，因为findID在这里用的不是find，是findOne
+    //所以可以使用正则表达式来匹配
+    next();
+});*/
+
+//匹配所有以find开头的查询
+tourSchema.pre(/^find/, function(next) {
+    this.find({ secretTour: { $ne: true } });  //为true的隐藏，查询结果隐藏
+    // 但是这里用id查询还是可以查询的到，因为findID在这里用的不是find，是findOne
+
+    this.start = Date.now();
+    next();
+});
+
+tourSchema.post(/^find/, function(docs, next) {
+    console.log(`查询了${Date.now() - this.start}毫秒`);
+    //console.log(docs);
+    next();
+});
+
+// 聚合中间件
+tourSchema.pre('aggregate', function(next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+    console.log(this.pipeline());
+    next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
