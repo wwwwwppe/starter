@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/validator" level="application" />
+    <orderEntry type="library" name="@types/validator" level="application" />
   </component>
 </module>
