@@ -3,11 +3,11 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
-const signToken = id =>{
-    return jwt.sign({id},process.env.JWT_SECRET,{
+const signToken = id => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
-    })
-}
+    });
+};
 
 exports.signup = catchAsync(async (req, res, next) => {
     // const newUser = await User.create(req.body);
@@ -43,4 +43,16 @@ exports.login = catchAsync(async (req, res, next) => {
         status: 'success',
         token
     });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+    // 1) 得到token和检查token是否存在
+    
+    // 2) 验证token
+    
+    // 3) 检查用户是否还存在
+    
+    // 4) 检查用户在发出令牌后是否更改了密码
+    
+    next();
 });

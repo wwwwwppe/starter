@@ -2,6 +2,8 @@ const express = require('express');
 const tourController = require('./../controllers/tourController');
 //const { id } = require('../controllers/tourController');
 const { getAllTours, createTour, getTour, updateTour, deleteTour, aliasTopTours } = tourController;
+const authController = require('./../controllers/authController');
+
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
@@ -24,7 +26,7 @@ router
 
 router
     .route('/')
-    .get(getAllTours)
+    .get(authController.protect, getAllTours) //中间件按照先后顺序来运行的
     .post(createTour);
 
 router
