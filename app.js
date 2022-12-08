@@ -12,6 +12,7 @@ const app = express();
 // 1)
 //console.log(process.env.NODE_ENV);
 app.use(morgan('dev'));
+// app.use(morgan('pro'));
 // if (process.env.NODE_ENV === 'development') {
 //   app.use(morgan('dev'));
 // }
@@ -21,7 +22,7 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
-    console.log(req.headers);
+    // console.log(req.headers);
     next();
 });
 

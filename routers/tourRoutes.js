@@ -8,6 +8,13 @@ const router = express.Router();
 
 // router.param('id', tourController.checkID);
 
+router.post('/signup', authController.signup);
+router.post('/login', authController.login);
+
+router.post('/forgotPassword', authController.forgotPassword);
+router.post('/resetPassword', authController.resetPassword);
+
+
 // Create a checkBody middleware
 // Check if body contains the name and price property
 // If not, send back 400 (bad request)
@@ -33,6 +40,10 @@ router
     .route('/:id')
     .get(getTour)
     .patch(updateTour)
-    .delete(deleteTour);
+    .delete(
+        authController.protect,
+        authController.restrictTo('admin', 'lead-guide'),
+        deleteTour
+    );
 
 module.exports = router;

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{starter/node_modules}" />
-    <file url="PROJECT" libraries="{@types/validator, starter/node_modules}" />
+    <file url="PROJECT" libraries="{@types/jsonwebtoken, @types/util.promisify, @types/validator, starter/node_modules}" />
     <includedPredefinedLibrary name="HTTP Response Handler" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
